@@ -1,196 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    tools:context=".ReceitaActivity">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <!-- Barra superior -->
-    <LinearLayout
-        android:id="@+id/header"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#0A84FF"
-        android:padding="16dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageView
-            android:id="@+id/btnVoltar"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="#FFFFFF"/>
-
-        <TextView
-            android:id="@+id/txtTitulo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Adicionar Receita"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginStart="16dp"/>
-    </LinearLayout>
-
-    <!-- Campo Data -->
-    <LinearLayout
-        android:id="@+id/campoData"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/bg_input"
-        android:padding="12dp"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_calendar"/>
-
-        <TextView
-            android:id="@+id/txtData"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hoje"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp"/>
-    </LinearLayout>
-
-    <!-- Categoria -->
     <EditText
-        android:id="@+id/edtCategoria"
-        android:layout_width="0dp"
+        android:id="@+id/etNomeReceita"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Adicionar categoria"
-        android:drawableStart="@drawable/ic_tag"
-        android:drawablePadding="8dp"
-        android:padding="12dp"
-        android:background="@drawable/bg_input"
-        android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/campoData"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"/>
+        android:hint="Nome da Receita" />
 
-    <!-- Valor -->
-    <LinearLayout
-        android:id="@+id/campoValor"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_input"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/edtCategoria"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="R$"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-
-        <EditText
-            android:id="@+id/edtValor"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="numberDecimal"
-            android:hint="0.00"
-            android:background="@android:color/transparent"
-            android:paddingStart="8dp"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="="
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/txtValorFinal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0,00"
-            android:layout_marginStart="8dp"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-    </LinearLayout>
-
-    <!-- Método de pagamento -->
-    <LinearLayout
-        android:id="@+id/campoMetodo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/bg_input"
-        android:padding="12dp"
-        android:gravity="center_vertical"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/campoValor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_money"/>
-
-        <TextView
-            android:id="@+id/txtMetodo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dinheiro"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp"/>
-    </LinearLayout>
-
-    <!-- Nota -->
-    <EditText
-        android:id="@+id/edtNota"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Adicionar uma nota"
-        android:background="@drawable/bg_input"
-        android:padding="12dp"
-        android:inputType="text"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/campoMetodo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- Botão salvar -->
     <Button
-        android:id="@+id/btnSalvar"
-        android:layout_width="0dp"
+        android:id="@+id/btnSalvarReceita"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Salvar"
-        android:backgroundTint="#0A84FF"
-        android:textColor="#FFFFFF"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/edtNota"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_gravity="end"
+        android:layout_marginTop="8dp"
+        android:text="Salvar" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

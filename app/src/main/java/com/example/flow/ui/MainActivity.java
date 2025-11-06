@@ -1,14 +1,17 @@
 package com.example.flow.ui;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,11 +24,8 @@ import com.example.flow.data.AppDatabase;
 import com.example.flow.data.Categoria;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,8 +35,10 @@ public class MainActivity extends AppCompatActivity {
     private AppDatabase db;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private TextView monthText;
-    private Calendar calendar = Calendar.getInstance();
+    private RecyclerView rvCategorias;
+    private LinearLayout emptyStateLayout;
+    private ImageView profileImageView;
+    private TextView profileNameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,69 +47,75 @@ public class MainActivity extends AppCompatActivity {
 
         // --- Encontrar Componentes ---
         FloatingActionButton btnAddCategoria = findViewById(R.id.btnAddCategoria);
-        RecyclerView rvCategorias = findViewById(R.id.rvCategorias);
-        monthText = findViewById(R.id.month_text);
-        ImageButton prevMonthButton = findViewById(R.id.prev_month_button);
-        ImageButton nextMonthButton = findViewById(R.id.next_month_button);
+        rvCategorias = findViewById(R.id.rvCategorias);
+        emptyStateLayout = findViewById(R.id.empty_state_layout);
+        LinearLayout profileSection = findViewById(R.id.profile_section);
+        profileImageView = findViewById(R.id.profile_image);
+        profileNameView = findViewById(R.id.profile_name);
 
         // --- Inicializar Base de Dados ---
         db = AppDatabase.getInstance(getApplicationContext());
 
         // --- Configurar a Lista ---
-        rvCategorias.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CategoriaAdapter(new ArrayList<>());
-        rvCategorias.setAdapter(adapter);
+        setupRecyclerView();
 
         // --- Carregar Dados Iniciais ---
         carregarCategorias();
-        updateMonthText();
+        loadProfileData();
 
-        // --- Configurar Clique do Botão ---
+        // --- Configurar Cliques ---
         btnAddCategoria.setOnClickListener(v -> mostrarDialogoSelecao());
-
-        monthText.setOnClickListener(v -> showDatePickerDialog(null));
-
-        prevMonthButton.setOnClickListener(v -> {
-            calendar.add(Calendar.MONTH, -1);
-            updateMonthText();
-        });
-
-        nextMonthButton.setOnClickListener(v -> {
-            calendar.add(Calendar.MONTH, 1);
-            updateMonthText();
+        profileSection.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
         });
     }
 
-    private void showDatePickerDialog(final TextView dateTextView) {
-        DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, dayOfMonth) -> {
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            if (dateTextView != null) {
-                updateDateText(dateTextView);
-            } else {
-                updateMonthText();
-            }
-        };
-
-        new DatePickerDialog(this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+    private void setupRecyclerView() {
+        rvCategorias.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new CategoriaAdapter(new ArrayList<>());
+        rvCategorias.setAdapter(adapter);
     }
 
-    private void updateMonthText() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy", Locale.getDefault());
-        monthText.setText(sdf.format(calendar.getTime()));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadProfileData();
+        carregarCategorias(); // Recarrega os dados ao voltar para a tela
     }
 
-    private void updateDateText(TextView textView) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        textView.setText(sdf.format(calendar.getTime()));
+    private void loadProfileData() {
+        SharedPreferences prefs = getSharedPreferences("profile", Context.MODE_PRIVATE);
+        String name = prefs.getString("name", null);
+        String imageUriString = prefs.getString("imageUri", null);
+
+        if (name != null && !name.isEmpty()) {
+            profileNameView.setText(name);
+        } else {
+            profileNameView.setText(R.string.profile);
+        }
+
+        if (imageUriString != null) {
+            Uri imageUri = Uri.parse(imageUriString);
+            profileImageView.setImageURI(imageUri);
+        } else {
+            profileImageView.setImageResource(R.drawable.ic_person);
+        }
     }
 
     private void carregarCategorias() {
         executor.execute(() -> {
             List<Categoria> categorias = db.categoriaDao().getAllCategorias();
-            runOnUiThread(() -> adapter.setLista(categorias));
+            runOnUiThread(() -> {
+                adapter.setLista(categorias);
+                updateEmptyState(categorias.isEmpty());
+            });
         });
+    }
+
+    private void updateEmptyState(boolean isEmpty) {
+        rvCategorias.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        emptyStateLayout.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
     }
 
     private void mostrarDialogoSelecao() {
@@ -115,84 +123,53 @@ public class MainActivity extends AppCompatActivity {
         Button btnReceitas = dialogView.findViewById(R.id.btnReceitas);
         Button btnDespesas = dialogView.findViewById(R.id.btnDespesas);
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setView(dialogView)
-                .create();
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
 
         btnReceitas.setOnClickListener(v -> {
-            mostrarDialogReceita();
+            mostrarDialogAdicionar("receita");
             dialog.dismiss();
         });
 
         btnDespesas.setOnClickListener(v -> {
-            mostrarDialogDespesa();
+            mostrarDialogAdicionar("despesa");
             dialog.dismiss();
         });
 
         dialog.show();
     }
 
-    private void mostrarDialogReceita() {
-        mostrarDialogCrud("receita");
-    }
-
-    private void mostrarDialogDespesa() {
-        mostrarDialogCrud("despesa");
-    }
-
-    private void mostrarDialogCrud(String tipo) {
+    private void mostrarDialogAdicionar(String tipo) {
         int layoutResId = "receita".equals(tipo) ? R.layout.float_receita : R.layout.float_despesa;
         View dialogView = LayoutInflater.from(this).inflate(layoutResId, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(dialogView);
+        AlertDialog dialog = builder.create();
 
-        ImageView btnVoltar = dialogView.findViewById(R.id.btnVoltar);
-        TextView txtData = dialogView.findViewById(R.id.txtData);
-        EditText edtCategoria = dialogView.findViewById(R.id.edtCategoria);
-        EditText edtValor = dialogView.findViewById(R.id.edtValor);
-        TextView txtMetodo = dialogView.findViewById(R.id.txtMetodo);
-        EditText edtNota = dialogView.findViewById(R.id.edtNota);
-        Button btnSalvar = dialogView.findViewById(R.id.btnSalvar);
+        EditText etNome;
+        Button btnSalvar;
 
-        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
-
-        txtData.setOnClickListener(v -> showDatePickerDialog(txtData));
-        updateDateText(txtData); // Inicia com a data atual
-
-        btnVoltar.setOnClickListener(v -> dialog.dismiss());
+        if ("receita".equals(tipo)) {
+            etNome = dialogView.findViewById(R.id.etNomeReceita);
+            btnSalvar = dialogView.findViewById(R.id.btnSalvarReceita);
+        } else {
+            etNome = dialogView.findViewById(R.id.etNomeDespesa);
+            btnSalvar = dialogView.findViewById(R.id.btnSalvarDespesa);
+        }
 
         btnSalvar.setOnClickListener(v -> {
-            String nome = edtCategoria.getText().toString().trim();
-            String valorStr = edtValor.getText().toString().trim();
-
+            String nome = etNome.getText().toString().trim();
             if (nome.isEmpty()) {
-                Toast.makeText(this, "Adicione uma categoria!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (valorStr.isEmpty()) {
-                Toast.makeText(this, "Adicione um valor!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Digite o nome!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            try {
-                double valor = Double.parseDouble(valorStr);
-                String data = txtData.getText().toString();
-                String metodo = txtMetodo.getText().toString();
-                String nota = edtNota.getText().toString().trim();
-
-                Categoria novaCategoria = new Categoria(nome, tipo, valor, data, metodo, nota);
-
-                executor.execute(() -> {
-                    db.categoriaDao().insert(novaCategoria);
-                    runOnUiThread(() -> {
-                        carregarCategorias();
-                        String msg = "receita".equals(tipo) ? "Receita adicionada!" : "Despesa adicionada!";
-                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
-                    });
+            executor.execute(() -> {
+                Categoria nova = new Categoria(nome, tipo);
+                db.categoriaDao().insert(nova);
+                runOnUiThread(() -> {
+                    carregarCategorias();
+                    dialog.dismiss();
                 });
-
-            } catch (NumberFormatException e) {
-                Toast.makeText(this, "Valor inválido!", Toast.LENGTH_SHORT).show();
-            }
+            });
         });
 
         dialog.show();

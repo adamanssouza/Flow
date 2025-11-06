@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "com.example.flow"
-    compileSdk = 36  // 34 é a versão estável mais usada no momento
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.flow"

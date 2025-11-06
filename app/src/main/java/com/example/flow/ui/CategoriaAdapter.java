@@ -1,6 +1,5 @@
 package com.example.flow.ui;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.flow.R;
 import com.example.flow.data.Categoria;
 
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.CategoriaViewHolder> {
 
@@ -35,23 +32,13 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
     @Override
     public void onBindViewHolder(@NonNull CategoriaViewHolder holder, int position) {
         Categoria categoria = categorias.get(position);
-
         holder.tvNomeCategoria.setText(categoria.getNome());
-        holder.tvData.setText(categoria.getData());
 
-        // Formatar o valor como moeda
-        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-        holder.tvValor.setText(format.format(categoria.getValor()));
-
-        // Define a cor do indicador e do valor com base no tipo
+        // Define a cor do indicador com base no tipo
         if ("receita".equals(categoria.getTipo())) {
-            int greenColor = ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_green_dark);
-            holder.indicator.setBackgroundColor(greenColor);
-            holder.tvValor.setTextColor(greenColor);
+            holder.indicator.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_green_dark));
         } else {
-            int redColor = ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_red_dark);
-            holder.indicator.setBackgroundColor(redColor);
-            holder.tvValor.setTextColor(redColor);
+            holder.indicator.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_red_dark));
         }
     }
 
@@ -67,15 +54,11 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
 
     static class CategoriaViewHolder extends RecyclerView.ViewHolder {
         TextView tvNomeCategoria;
-        TextView tvData;
-        TextView tvValor;
         View indicator;
 
         public CategoriaViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNomeCategoria = itemView.findViewById(R.id.tvNomeCategoria);
-            tvData = itemView.findViewById(R.id.tvData);
-            tvValor = itemView.findViewById(R.id.tvValor);
             indicator = itemView.findViewById(R.id.indicator);
         }
     }

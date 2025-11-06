@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Flow</string>
+    <string name="previous_month">Mês anterior</string>
+    <string name="next_month">Próximo mês</string>
+    <string name="profile">Perfil</string>
+    <string name="month_placeholder">Mês Ano</string>
+    <string name="empty_state_title">Comece a rastrear seu dinheiro</string>
+    <string name="empty_state_description">
+        Comece sua jornada financeira registrando sua primeira receita ou despesa.
+        Toque no botão +Adicionar para começar e descobrir suas tendências de gastos.
+    </string>
+    <string name="add_transaction">Adicionar transação</string>
 </resources>
