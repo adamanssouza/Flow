@@ -26,6 +26,14 @@
             android:name=".ui.ProfileActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.ReceitaActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.DespesaActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

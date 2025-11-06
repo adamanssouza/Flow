@@ -46,10 +46,10 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        profileImageView = findViewById(R.id.profile_image_edit);
-        etProfileName = findViewById(R.id.etProfileName);
-        etProfileEmail = findViewById(R.id.etProfileEmail);
-        btnSaveProfile = findViewById(R.id.btnSaveProfile);
+        profileImageView = findViewById(R.id.profile_image_large);
+        etProfileName = findViewById(R.id.edit_text_name);
+        etProfileEmail = findViewById(R.id.edit_text_email);
+        btnSaveProfile = findViewById(R.id.button_save);
 
         loadProfileData();
 
@@ -110,9 +110,8 @@ public class ProfileActivity extends AppCompatActivity {
                 profileImageView.setImageURI(storedUri);
                 imageUri = storedUri;
             } else {
-                // Permissão perdida, volta para o padrão
                 profileImageView.setImageResource(R.drawable.ic_person);
-                prefs.edit().remove("imageUri").apply(); // Limpa a URI inválida
+                prefs.edit().remove("imageUri").apply();
             }
         } else {
             profileImageView.setImageResource(R.drawable.ic_person);
@@ -121,9 +120,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     private boolean canReadUri(Uri uri) {
         try (InputStream ignored = getContentResolver().openInputStream(uri)) {
-            return true; // Se não lançar exceção, temos permissão
+            return true;
         } catch (Exception e) {
-            return false; // Se lançar qualquer exceção (Security ou FileNotFound), não temos permissão
+            return false;
         }
     }
 

@@ -6,56 +6,51 @@
     android:layout_height="match_parent"
     tools:context=".ui.ProfileActivity">
 
-    <com.google.android.material.image.ShapeableImageView
-        android:id="@+id/profile_image_edit"
+    <ImageView
+        android:id="@+id/profile_image_large"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginTop="32dp"
+        android:background="@drawable/profile_image_background"
         android:clickable="true"
         android:contentDescription="@string/profile"
         android:focusable="true"
-        android:padding="2dp"
-        android:scaleType="centerCrop"
+        android:padding="16dp"
         android:src="@drawable/ic_person"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-        app:strokeColor="#E0E0E0"
-        app:strokeWidth="2dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/etProfileName"
+        android:id="@+id/edit_text_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_margin="16dp"
         android:hint="Nome"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_image_edit" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_image_large" />
 
     <EditText
-        android:id="@+id/etProfileEmail"
+        android:id="@+id/edit_text_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_margin="16dp"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="@+id/etProfileName"
-        app:layout_constraintStart_toStartOf="@+id/etProfileName"
-        app:layout_constraintTop_toBottomOf="@+id/etProfileName" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_name" />
 
     <Button
-        android:id="@+id/btnSaveProfile"
+        android:id="@+id/button_save"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_margin="16dp"
         android:text="Salvar"
-        app:layout_constraintEnd_toEndOf="@+id/etProfileEmail"
-        app:layout_constraintStart_toStartOf="@+id/etProfileEmail"
-        app:layout_constraintTop_toBottomOf="@+id/etProfileEmail" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_email" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

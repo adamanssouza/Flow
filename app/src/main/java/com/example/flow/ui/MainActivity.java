@@ -9,12 +9,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CategoriaAdapter.OnItemLongClickListener {
 
     private CategoriaAdapter adapter;
     private AppDatabase db;
@@ -73,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         rvCategorias.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CategoriaAdapter(new ArrayList<>());
+        adapter = new CategoriaAdapter(new ArrayList<>(), this);
         rvCategorias.setAdapter(adapter);
     }
 
@@ -126,50 +123,46 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
 
         btnReceitas.setOnClickListener(v -> {
-            mostrarDialogAdicionar("receita");
+            Intent intent = new Intent(MainActivity.this, ReceitaActivity.class);
+            startActivity(intent);
             dialog.dismiss();
         });
 
         btnDespesas.setOnClickListener(v -> {
-            mostrarDialogAdicionar("despesa");
+            Intent intent = new Intent(MainActivity.this, DespesaActivity.class);
+            startActivity(intent);
             dialog.dismiss();
         });
 
         dialog.show();
     }
 
-    private void mostrarDialogAdicionar(String tipo) {
-        int layoutResId = "receita".equals(tipo) ? R.layout.float_receita : R.layout.float_despesa;
-        View dialogView = LayoutInflater.from(this).inflate(layoutResId, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(dialogView);
-        AlertDialog dialog = builder.create();
+    @Override
+    public void onItemLongClick(Categoria categoria) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_item_options, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
 
-        EditText etNome;
-        Button btnSalvar;
+        TextView tvEdit = dialogView.findViewById(R.id.tvEdit);
+        TextView tvDelete = dialogView.findViewById(R.id.tvDelete);
 
-        if ("receita".equals(tipo)) {
-            etNome = dialogView.findViewById(R.id.etNomeReceita);
-            btnSalvar = dialogView.findViewById(R.id.btnSalvarReceita);
-        } else {
-            etNome = dialogView.findViewById(R.id.etNomeDespesa);
-            btnSalvar = dialogView.findViewById(R.id.btnSalvarDespesa);
-        }
-
-        btnSalvar.setOnClickListener(v -> {
-            String nome = etNome.getText().toString().trim();
-            if (nome.isEmpty()) {
-                Toast.makeText(this, "Digite o nome!", Toast.LENGTH_SHORT).show();
-                return;
+        tvEdit.setOnClickListener(v -> {
+            Intent intent;
+            if ("receita".equals(categoria.getTipo())) {
+                intent = new Intent(MainActivity.this, ReceitaActivity.class);
+            } else {
+                intent = new Intent(MainActivity.this, DespesaActivity.class);
             }
+            intent.putExtra("categoria_id", categoria.getId());
+            startActivity(intent);
+            dialog.dismiss();
+        });
 
+        tvDelete.setOnClickListener(v -> {
             executor.execute(() -> {
-                Categoria nova = new Categoria(nome, tipo);
-                db.categoriaDao().insert(nova);
-                runOnUiThread(() -> {
-                    carregarCategorias();
-                    dialog.dismiss();
-                });
+                db.categoriaDao().delete(categoria);
+                carregarCategorias();
             });
+            dialog.dismiss();
         });
 
         dialog.show();

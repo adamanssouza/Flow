@@ -10,4 +10,9 @@
         Toque no botão +Adicionar para começar e descobrir suas tendências de gastos.
     </string>
     <string name="add_transaction">Adicionar transação</string>
+    <string-array name="payment_methods">
+        <item>Dinheiro</item>
+        <item>Cartão</item>
+        <item>Pix</item>
+    </string-array>
 </resources>

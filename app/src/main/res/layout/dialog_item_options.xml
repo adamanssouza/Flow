@@ -3,72 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/tvOptionNome"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvEdit"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nome da Categoria"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvOptionValor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="R$ 0,00"
+        android:padding="12dp"
+        android:text="Editar"
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/tvOptionData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Data: dd/MM/yyyy"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/tvOptionMetodo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Método: Dinheiro"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/tvOptionNota"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Nota: Alguma nota aqui"
-        android:textSize="16sp"
-        android:visibility="gone" />
-
-    <LinearLayout
+        android:id="@+id/tvDelete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnExcluir"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Excluir"
-            android:textColor="@android:color/holo_red_dark" />
-
-        <Button
-            android:id="@+id/btnEditar"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Editar" />
-
-    </LinearLayout>
+        android:padding="12dp"
+        android:text="Excluir"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="18sp" />
 
 </LinearLayout>

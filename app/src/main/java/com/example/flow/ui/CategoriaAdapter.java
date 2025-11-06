@@ -17,9 +17,15 @@ import java.util.List;
 public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.CategoriaViewHolder> {
 
     private List<Categoria> categorias;
+    private final OnItemLongClickListener listener;
 
-    public CategoriaAdapter(List<Categoria> categorias) {
+    public interface OnItemLongClickListener {
+        void onItemLongClick(Categoria categoria);
+    }
+
+    public CategoriaAdapter(List<Categoria> categorias, OnItemLongClickListener listener) {
         this.categorias = categorias;
+        this.listener = listener;
     }
 
     @NonNull
@@ -32,14 +38,7 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
     @Override
     public void onBindViewHolder(@NonNull CategoriaViewHolder holder, int position) {
         Categoria categoria = categorias.get(position);
-        holder.tvNomeCategoria.setText(categoria.getNome());
-
-        // Define a cor do indicador com base no tipo
-        if ("receita".equals(categoria.getTipo())) {
-            holder.indicator.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_green_dark));
-        } else {
-            holder.indicator.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_red_dark));
-        }
+        holder.bind(categoria, listener);
     }
 
     @Override
@@ -53,13 +52,38 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
     }
 
     static class CategoriaViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNomeCategoria;
+        TextView tvNomeCategoria, tvValor, tvData;
         View indicator;
 
         public CategoriaViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNomeCategoria = itemView.findViewById(R.id.tvNomeCategoria);
+            tvValor = itemView.findViewById(R.id.tvValor);
+            tvData = itemView.findViewById(R.id.tvData);
             indicator = itemView.findViewById(R.id.indicator);
+        }
+
+        public void bind(final Categoria categoria, final OnItemLongClickListener listener) {
+            tvNomeCategoria.setText(categoria.getNome());
+            tvData.setText(categoria.getData());
+            
+            String valorFormatado = String.format("R$ %.2f", categoria.getValor());
+            tvValor.setText(valorFormatado);
+
+            if ("receita".equals(categoria.getTipo())) {
+                indicator.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), android.R.color.holo_green_dark));
+                tvValor.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.holo_green_dark));
+            } else {
+                indicator.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), android.R.color.holo_red_dark));
+                tvValor.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.holo_red_dark));
+            }
+
+            itemView.setOnLongClickListener(v -> {
+                if (listener != null) {
+                    listener.onItemLongClick(categoria);
+                }
+                return true;
+            });
         }
     }
 }
