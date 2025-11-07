@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
     private LinearLayout emptyStateLayout;
     private ImageView profileImageView;
     private TextView profileNameView;
+    private TextView tvTotalReceitas, tvTotalDespesas, tvSaldoTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
         LinearLayout profileSection = findViewById(R.id.profile_section);
         profileImageView = findViewById(R.id.profile_image);
         profileNameView = findViewById(R.id.profile_name);
+        tvTotalReceitas = findViewById(R.id.tv_total_receitas);
+        tvTotalDespesas = findViewById(R.id.tv_total_despesas);
+        tvSaldoTotal = findViewById(R.id.tv_saldo_total);
 
         // --- Inicializar Base de Dados ---
         db = AppDatabase.getInstance(getApplicationContext());
@@ -106,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
             runOnUiThread(() -> {
                 adapter.setLista(categorias);
                 updateEmptyState(categorias.isEmpty());
+                atualizarSaldo(categorias);
             });
         });
     }
@@ -113,6 +118,25 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
     private void updateEmptyState(boolean isEmpty) {
         rvCategorias.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
         emptyStateLayout.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+    }
+
+    private void atualizarSaldo(List<Categoria> categorias) {
+        double totalReceitas = 0;
+        double totalDespesas = 0;
+
+        for (Categoria c : categorias) {
+            if ("receita".equals(c.getTipo())) {
+                totalReceitas += c.getValor();
+            } else {
+                totalDespesas += c.getValor();
+            }
+        }
+
+        double saldoTotal = totalReceitas - totalDespesas;
+
+        tvTotalReceitas.setText(String.format("R$ %.2f", totalReceitas));
+        tvTotalDespesas.setText(String.format("R$ %.2f", totalDespesas));
+        tvSaldoTotal.setText(String.format("R$ %.2f", saldoTotal));
     }
 
     private void mostrarDialogoSelecao() {
@@ -142,10 +166,10 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_item_options, null);
         AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
 
-        TextView tvEdit = dialogView.findViewById(R.id.tvEdit);
-        TextView tvDelete = dialogView.findViewById(R.id.tvDelete);
+        Button btnEditar = dialogView.findViewById(R.id.btnEditar);
+        Button btnExcluir = dialogView.findViewById(R.id.btnExcluir);
 
-        tvEdit.setOnClickListener(v -> {
+        btnEditar.setOnClickListener(v -> {
             Intent intent;
             if ("receita".equals(categoria.getTipo())) {
                 intent = new Intent(MainActivity.this, ReceitaActivity.class);
@@ -157,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
             dialog.dismiss();
         });
 
-        tvDelete.setOnClickListener(v -> {
+        btnExcluir.setOnClickListener(v -> {
             executor.execute(() -> {
                 db.categoriaDao().delete(categoria);
                 carregarCategorias();

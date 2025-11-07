@@ -38,8 +38,7 @@
                 android:contentDescription="@string/profile"
                 android:focusable="true"
                 android:padding="8dp"
-                android:src="@drawable/ic_person"
-                app:tint="#616161" />
+                android:src="@drawable/ic_person" />
 
             <TextView
                 android:id="@+id/profile_name"
@@ -54,6 +53,91 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Card de Saldo -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/balance_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/top_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Receitas"
+                    android:textColor="@android:color/holo_green_dark"/>
+
+                <TextView
+                    android:id="@+id/tv_total_receitas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="R$ 0,00"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Despesas"
+                    android:textColor="@android:color/holo_red_dark"/>
+
+                <TextView
+                    android:id="@+id/tv_total_despesas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="R$ 0,00"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Saldo"/>
+
+                <TextView
+                    android:id="@+id/tv_saldo_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="R$ 0,00"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
     <!-- 3. Conteúdo Principal -->
     <FrameLayout
         android:id="@+id/content_frame"
@@ -62,7 +146,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar">
+        app:layout_constraintTop_toBottomOf="@+id/balance_card">
 
         <!-- Lista de Itens -->
         <androidx.recyclerview.widget.RecyclerView

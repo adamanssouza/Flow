@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -25,12 +24,28 @@ import java.io.InputStream;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final int PICK_IMAGE_REQUEST = 1;
     private ImageView profileImageView;
     private EditText etProfileName, etProfileEmail;
     private Button btnSaveProfile;
     private Uri imageUri;
 
+    // Launcher para obter a imagem da galeria (abordagem moderna)
+    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                    imageUri = result.getData().getData();
+                    final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                    try {
+                        getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
+                        profileImageView.setImageURI(imageUri);
+                    } catch (SecurityException e) {
+                        Toast.makeText(this, "Não foi possível obter permissão para a imagem.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+    // Launcher para pedir permissão de acesso à galeria
     private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
             isGranted -> {
@@ -77,22 +92,7 @@ public class ProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
-            try {
-                getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
-                profileImageView.setImageURI(imageUri);
-            } catch (SecurityException e) {
-                Toast.makeText(this, "Não foi possível obter permissão para a imagem.", Toast.LENGTH_SHORT).show();
-            }
-        }
+        pickImageLauncher.launch(intent);
     }
 
     private void loadProfileData() {

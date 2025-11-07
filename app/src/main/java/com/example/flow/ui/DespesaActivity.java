@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -71,9 +72,12 @@ public class DespesaActivity extends AppCompatActivity {
                     txtData.setText(categoriaExistente.getData());
                     edtNota.setText(categoriaExistente.getNota());
                     // Selecionar o método de pagamento no spinner
-                    ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) spinnerMetodoPagamento.getAdapter();
-                    int position = adapter.getPosition(categoriaExistente.getMetodoPagamento());
-                    spinnerMetodoPagamento.setSelection(position);
+                    SpinnerAdapter adapter = spinnerMetodoPagamento.getAdapter();
+                    if (adapter instanceof ArrayAdapter) {
+                        ArrayAdapter<CharSequence> arrayAdapter = (ArrayAdapter<CharSequence>) adapter;
+                        int position = arrayAdapter.getPosition(categoriaExistente.getMetodoPagamento());
+                        spinnerMetodoPagamento.setSelection(position);
+                    }
                 }
             });
         });
