@@ -6,17 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.ProfileActivity">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image_large"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="32dp"
-        android:background="@drawable/profile_image_background"
         android:clickable="true"
         android:contentDescription="@string/profile"
         android:focusable="true"
-        android:padding="16dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_person"
+        app:civ_border_color="#FF000000" 
+        app:civ_border_width="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

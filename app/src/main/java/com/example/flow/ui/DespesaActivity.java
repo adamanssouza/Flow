@@ -8,13 +8,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.flow.R;
 import com.example.flow.data.AppDatabase;
 import com.example.flow.data.Categoria;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 
 public class DespesaActivity extends AppCompatActivity {
 
-    private EditText edtCategoria, edtValor, edtNota;
+    private EditText edtValor, edtNota;
     private TextView txtData;
     private Spinner spinnerMetodoPagamento;
     private Button btnSalvar;
@@ -41,7 +41,6 @@ public class DespesaActivity extends AppCompatActivity {
 
         db = AppDatabase.getInstance(getApplicationContext());
 
-        edtCategoria = findViewById(R.id.edtCategoria);
         edtValor = findViewById(R.id.edtValor);
         edtNota = findViewById(R.id.edtNota);
         txtData = findViewById(R.id.txtData);
@@ -51,9 +50,10 @@ public class DespesaActivity extends AppCompatActivity {
         campoData = findViewById(R.id.campoData);
 
         setupDatePicker();
-        setupSpinner();
+        setupMetodoPagamentoSpinner();
 
         int categoriaId = getIntent().getIntExtra("categoria_id", -1);
+
         if (categoriaId != -1) {
             carregarCategoria(categoriaId);
         }
@@ -67,16 +67,15 @@ public class DespesaActivity extends AppCompatActivity {
             categoriaExistente = db.categoriaDao().getCategoriaById(id);
             runOnUiThread(() -> {
                 if (categoriaExistente != null) {
-                    edtCategoria.setText(categoriaExistente.getNome());
+                    edtNota.setText(categoriaExistente.getNota());
                     edtValor.setText(String.valueOf(categoriaExistente.getValor()));
                     txtData.setText(categoriaExistente.getData());
-                    edtNota.setText(categoriaExistente.getNota());
-                    // Selecionar o método de pagamento no spinner
-                    SpinnerAdapter adapter = spinnerMetodoPagamento.getAdapter();
-                    if (adapter instanceof ArrayAdapter) {
-                        ArrayAdapter<CharSequence> arrayAdapter = (ArrayAdapter<CharSequence>) adapter;
-                        int position = arrayAdapter.getPosition(categoriaExistente.getMetodoPagamento());
-                        spinnerMetodoPagamento.setSelection(position);
+
+                    if (spinnerMetodoPagamento.getAdapter() instanceof ArrayAdapter) {
+                        @SuppressWarnings("unchecked")
+                        ArrayAdapter<CharSequence> metodoAdapter = (ArrayAdapter<CharSequence>) spinnerMetodoPagamento.getAdapter();
+                        int metodoPosition = metodoAdapter.getPosition(categoriaExistente.getMetodoPagamento());
+                        spinnerMetodoPagamento.setSelection(metodoPosition);
                     }
                 }
             });
@@ -84,59 +83,57 @@ public class DespesaActivity extends AppCompatActivity {
     }
 
     private void setupDatePicker() {
-        DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
+        DatePickerDialog.OnDateSetListener date = (view, year, month, day) -> {
             myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            myCalendar.set(Calendar.MONTH, month);
+            myCalendar.set(Calendar.DAY_OF_MONTH, day);
             updateLabel();
         };
-
-        campoData.setOnClickListener(v -> new DatePickerDialog(DespesaActivity.this, date, myCalendar
-                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                myCalendar.get(Calendar.DAY_OF_MONTH)).show());
+        campoData.setOnClickListener(v -> new DatePickerDialog(this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show());
+        updateLabel();
     }
 
     private void updateLabel() {
-        String myFormat = "dd/MM/yy"; //In which you need put here
+        String myFormat = "dd/MM/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         txtData.setText(sdf.format(myCalendar.getTime()));
     }
 
-    private void setupSpinner() {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.payment_methods, android.R.layout.simple_spinner_item);
+    private void setupMetodoPagamentoSpinner() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.payment_methods, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerMetodoPagamento.setAdapter(adapter);
     }
 
     private void salvarDespesa() {
-        String nome = edtCategoria.getText().toString().trim();
+        String nota = edtNota.getText().toString().trim();
         String valorStr = edtValor.getText().toString().trim();
         String data = txtData.getText().toString().trim();
         String metodoPagamento = spinnerMetodoPagamento.getSelectedItem().toString();
-        String nota = edtNota.getText().toString().trim();
 
-        if (nome.isEmpty() || valorStr.isEmpty()) {
-            Toast.makeText(this, "Preencha o nome e o valor!", Toast.LENGTH_SHORT).show();
+        if (valorStr.isEmpty()) {
+            Toast.makeText(this, "Preencha o valor!", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        String nomeDaTransacao = nota.isEmpty() ? "Despesa" : nota;
         double valor = Double.parseDouble(valorStr);
 
         executor.execute(() -> {
             if (categoriaExistente != null) {
-                // Atualizar categoria existente
-                categoriaExistente.setNome(nome);
+                categoriaExistente.setNome(nomeDaTransacao);
+                categoriaExistente.setNota(nota);
                 categoriaExistente.setValor(valor);
                 categoriaExistente.setData(data);
                 categoriaExistente.setMetodoPagamento(metodoPagamento);
-                categoriaExistente.setNota(nota);
+                // O campo 'grupo' não é mais definido aqui
                 db.categoriaDao().update(categoriaExistente);
             } else {
-                // Criar nova categoria
-                Categoria nova = new Categoria(nome, "despesa", valor, data, metodoPagamento, nota);
+                // O campo 'grupo' é passado como null ou uma string vazia
+                Categoria nova = new Categoria(nomeDaTransacao, "despesa", valor, data, metodoPagamento, nota, "");
                 db.categoriaDao().insert(nova);
             }
+
             runOnUiThread(() -> {
                 Toast.makeText(this, "Despesa salva!", Toast.LENGTH_SHORT).show();
                 finish();

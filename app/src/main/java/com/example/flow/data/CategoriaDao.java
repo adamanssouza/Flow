@@ -24,4 +24,10 @@ public interface CategoriaDao {
 
     @Query("SELECT * FROM categorias WHERE id = :id")
     Categoria getCategoriaById(int id);
+
+    @Query("DELETE FROM categorias WHERE grupo = :groupName")
+    void deleteByGroupName(String groupName);
+
+    @Query("UPDATE categorias SET grupo = :novoNome WHERE grupo = :nomeAntigo")
+    void updateGroupName(String nomeAntigo, String novoNome);
 }

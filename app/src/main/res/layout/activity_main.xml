@@ -17,6 +17,35 @@
         android:paddingBottom="8dp"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:id="@+id/ivSearchIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_search"
+            android:layout_marginStart="16dp"
+            app:tint="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="Buscar" />
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:hint="Buscar Grupo..."
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/darker_gray"
+            app:layout_constraintStart_toEndOf="@id/ivSearchIcon"
+            app:layout_constraintEnd_toStartOf="@id/profile_section"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="8dp"
+            android:importantForAutofill="no"
+            android:inputType="text" />
+
         <!-- Grupo do Perfil -->
         <LinearLayout
             android:id="@+id/profile_section"
@@ -29,7 +58,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -47,10 +76,8 @@
                 android:text="@string/profile"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                tools:text="Adaman" />
-
+                tools:text="Perfil" />
         </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Card de Saldo -->
@@ -61,81 +88,145 @@
         android:layout_margin="16dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar"
+        app:layout_constraintTop_toBottomOf="@id/top_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <!-- CABEÇALHO CLICÁVEL -->
+            <RelativeLayout
+                android:id="@+id/balance_header"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:padding="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
 
                 <TextView
+                    android:id="@+id/tv_balance_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Receitas"
-                    android:textColor="@android:color/holo_green_dark"/>
-
-                <TextView
-                    android:id="@+id/tv_total_receitas"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="R$ 0,00"
-                    android:textSize="18sp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="Resumo Financeiro"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="0dp"
+                <ImageView
+                    android:id="@+id/iv_balance_toggle"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_expand_more"
+                    android:visibility="visible"
+                    tools:ignore="ContentDescription" />
+            </RelativeLayout>
+
+            <!-- CONTEÚDO EXPANSÍVEL (OS VALORES) -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/balance_details"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="16dp"
+                android:visibility="gone"
+                tools:visibility="visible">
 
-                <TextView
+                <!-- Coluna Receitas -->
+                <LinearLayout
+                    android:id="@+id/receitas_column"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Despesas"
-                    android:textColor="@android:color/holo_red_dark"/>
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toStartOf="@id/despesas_column"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/tv_total_despesas"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Receitas"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_total_receitas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="R$ 0,00"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Coluna Despesas -->
+                <LinearLayout
+                    android:id="@+id/despesas_column"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="R$ 0,00"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toStartOf="@id/saldo_column"
+                    app:layout_constraintStart_toEndOf="@id/receitas_column"
+                    app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Despesas"
+                        android:textColor="@android:color/holo_red_dark"
+                        android:textSize="12sp"/>
 
-                <TextView
+                    <TextView
+                        android:id="@+id/tv_total_despesas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="R$ 0,00"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Coluna Saldo -->
+                <LinearLayout
+                    android:id="@+id/saldo_column"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Saldo"/>
+                    android:gravity="end"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/despesas_column"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/tv_saldo_total"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="R$ 0,00"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Saldo"
+                        android:textSize="12sp"/>
 
+                    <TextView
+                        android:id="@+id/tv_saldo_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="R$ 0,00"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 
     <!-- 3. Conteúdo Principal -->
@@ -146,7 +237,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/balance_card">
+        app:layout_constraintTop_toBottomOf="@id/balance_card">
 
         <!-- Lista de Itens -->
         <androidx.recyclerview.widget.RecyclerView
@@ -162,7 +253,9 @@
             android:layout_gravity="center"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="32dp">
+            android:padding="32dp"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -187,7 +280,7 @@
 
     <!-- 4. Botão Adicionar -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnAddCategoria"
+        android:id="@+id/btnAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"

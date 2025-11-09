@@ -2,7 +2,6 @@ package com.example.flow.ui;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -10,47 +9,45 @@ import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
+import com.canhub.cropper.CropImageView;
 import com.example.flow.R;
-
-import java.io.InputStream;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private ImageView profileImageView;
+    private CircleImageView profileImageView;
     private EditText etProfileName, etProfileEmail;
     private Button btnSaveProfile;
     private Uri imageUri;
 
-    // Launcher para obter a imagem da galeria (abordagem moderna)
-    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
+    private final ActivityResultLauncher<CropImageContractOptions> cropImageLauncher = registerForActivityResult(
+            new CropImageContract(),
             result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
-                    imageUri = result.getData().getData();
-                    final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
-                    try {
-                        getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
-                        profileImageView.setImageURI(imageUri);
-                    } catch (SecurityException e) {
-                        Toast.makeText(this, "Não foi possível obter permissão para a imagem.", Toast.LENGTH_SHORT).show();
-                    }
+                if (result.isSuccessful()) {
+                    imageUri = result.getUriContent();
+                    profileImageView.setImageURI(imageUri);
+                } else {
+                    // Você pode tratar o erro aqui se quiser
+                    // Toast.makeText(this, "Corte de imagem cancelado.", Toast.LENGTH_SHORT).show();
                 }
             });
 
-    // Launcher para pedir permissão de acesso à galeria
     private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
             isGranted -> {
                 if (isGranted) {
-                    openFileChooser();
+                    startImageCrop();
                 } else {
                     Toast.makeText(this, "Permissão para acessar galeria foi negada.", Toast.LENGTH_SHORT).show();
                 }
@@ -68,12 +65,33 @@ public class ProfileActivity extends AppCompatActivity {
 
         loadProfileData();
 
-        profileImageView.setOnClickListener(v -> checkPermissionAndOpenFileChooser());
+        profileImageView.setOnClickListener(v -> showImageOptionsDialog());
 
         btnSaveProfile.setOnClickListener(v -> saveProfileData());
     }
 
-    private void checkPermissionAndOpenFileChooser() {
+    private void showImageOptionsDialog() {
+        final CharSequence[] options = {"Escolher nova foto", "Remover foto", "Cancelar"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Foto de Perfil");
+        builder.setItems(options, (dialog, item) -> {
+            if (options[item].equals("Escolher nova foto")) {
+                checkPermissionAndStartCrop();
+            } else if (options[item].equals("Remover foto")) {
+                removeProfileImage();
+            } else if (options[item].equals("Cancelar")) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    private void removeProfileImage() {
+        imageUri = null;
+        profileImageView.setImageResource(R.drawable.ic_person);
+    }
+
+    private void checkPermissionAndStartCrop() {
         String permission;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permission = Manifest.permission.READ_MEDIA_IMAGES;
@@ -82,17 +100,22 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-            openFileChooser();
+            startImageCrop();
         } else {
             requestPermissionLauncher.launch(permission);
         }
     }
 
-    private void openFileChooser() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        pickImageLauncher.launch(intent);
+    private void startImageCrop() {
+        CropImageOptions cropOptions = new CropImageOptions();
+        cropOptions.cropShape = CropImageView.CropShape.OVAL;
+        cropOptions.aspectRatioX = 1;
+        cropOptions.aspectRatioY = 1;
+        cropOptions.guidelines = CropImageView.Guidelines.ON;
+        cropOptions.fixAspectRatio = true;
+
+        CropImageContractOptions contractOptions = new CropImageContractOptions(null, cropOptions);
+        cropImageLauncher.launch(contractOptions);
     }
 
     private void loadProfileData() {
@@ -106,23 +129,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (imageUriString != null) {
             Uri storedUri = Uri.parse(imageUriString);
-            if (canReadUri(storedUri)) {
-                profileImageView.setImageURI(storedUri);
-                imageUri = storedUri;
-            } else {
-                profileImageView.setImageResource(R.drawable.ic_person);
-                prefs.edit().remove("imageUri").apply();
-            }
+            profileImageView.setImageURI(storedUri);
+            imageUri = storedUri;
         } else {
             profileImageView.setImageResource(R.drawable.ic_person);
-        }
-    }
-
-    private boolean canReadUri(Uri uri) {
-        try (InputStream ignored = getContentResolver().openInputStream(uri)) {
-            return true;
-        } catch (Exception e) {
-            return false;
         }
     }
 

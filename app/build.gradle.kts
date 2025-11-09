@@ -31,6 +31,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -39,6 +43,10 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation("androidx.multidex:multidex:2.0.1")
+
+    // Circle ImageView & Cropper
+    implementation(libs.circleimageview)
+    implementation(libs.image.cropper)
 
     // Testes
     testImplementation(libs.junit)
