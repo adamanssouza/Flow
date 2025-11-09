@@ -24,4 +24,11 @@ public interface CategoriaDao {
 
     @Query("SELECT * FROM categorias WHERE id = :id")
     Categoria getCategoriaById(int id);
+
+    // NOVOS MÉTODOS PARA TRABALHAR COM GRUPOS
+    @Query("SELECT * FROM categorias WHERE grupoId = :grupoId ORDER BY id DESC")
+    List<Categoria> getCategoriasPorGrupo(int grupoId);
+
+    @Query("SELECT * FROM categorias WHERE grupoId IS NULL ORDER BY id DESC")
+    List<Categoria> getCategoriasSemGrupo();
 }

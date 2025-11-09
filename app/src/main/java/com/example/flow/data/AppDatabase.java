@@ -5,11 +5,12 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Categoria.class}, version = 2, exportSchema = false)
+@Database(entities = {Grupo.class, Categoria.class}, version = 3, exportSchema = false) //Bruno: mudei a versão do banco para 3
 public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
 
     public abstract CategoriaDao categoriaDao();
+    public abstract GrupoDao grupoDao(); //Bruno: novo DAO para grupos
 
     public static AppDatabase getInstance(final Context context) {
         if (INSTANCE == null) {

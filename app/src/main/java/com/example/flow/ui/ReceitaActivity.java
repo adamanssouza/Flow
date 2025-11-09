@@ -130,7 +130,7 @@ public class ReceitaActivity extends AppCompatActivity {
                 db.categoriaDao().update(categoriaExistente);
             } else {
                 // Criar nova categoria
-                Categoria nova = new Categoria(nome, "receita", valor, data, metodoPagamento, nota);
+                Categoria nova = new Categoria(nome, "receita", valor, data, metodoPagamento, nota, null);
                 db.categoriaDao().insert(nova);
             }
             runOnUiThread(() -> {

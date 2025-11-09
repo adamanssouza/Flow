@@ -1,9 +1,10 @@
 package com.example.flow.data;
 
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
-
 @Entity(tableName = "categorias")
+
 public class Categoria {
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -13,15 +14,17 @@ public class Categoria {
     private String data;
     private String metodoPagamento;
     private String nota;
+    private Integer grupoId; // NOVO: Relacionamento com Grupo (pode ser nulo para compatibilidade)
 
     // Construtor
-    public Categoria(String nome, String tipo, double valor, String data, String metodoPagamento, String nota) {
+    public Categoria(String nome, String tipo, double valor, String data, String metodoPagamento, String nota, Integer grupoId) {
         this.nome = nome;
         this.tipo = tipo;
         this.valor = valor;
         this.data = data;
         this.metodoPagamento = metodoPagamento;
         this.nota = nota;
+        this.grupoId = grupoId;
     }
 
     // Getters e setters
@@ -45,4 +48,6 @@ public class Categoria {
 
     public String getNota() { return nota; }
     public void setNota(String nota) { this.nota = nota; }
+    public Integer getGrupoId() { return grupoId; }
+    public void setGrupoId(Integer grupoId) { this.grupoId = grupoId; }
 }
