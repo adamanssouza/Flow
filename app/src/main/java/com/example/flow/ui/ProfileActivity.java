@@ -2,7 +2,6 @@ package com.example.flow.ui;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -18,15 +17,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.canhub.cropper.CropImage;
 import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
 import com.example.flow.R;
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import java.io.InputStream;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -42,7 +38,8 @@ public class ProfileActivity extends AppCompatActivity {
                     imageUri = result.getUriContent();
                     profileImageView.setImageURI(imageUri);
                 } else {
-                    Toast.makeText(this, "Corte de imagem cancelado.", Toast.LENGTH_SHORT).show();
+                    // Você pode tratar o erro aqui se quiser
+                    // Toast.makeText(this, "Corte de imagem cancelado.", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -132,8 +129,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (imageUriString != null) {
             Uri storedUri = Uri.parse(imageUriString);
-                profileImageView.setImageURI(storedUri);
-                imageUri = storedUri;
+            profileImageView.setImageURI(storedUri);
+            imageUri = storedUri;
         } else {
             profileImageView.setImageResource(R.drawable.ic_person);
         }

@@ -8,19 +8,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.flow.R;
 import com.example.flow.data.AppDatabase;
 import com.example.flow.data.Categoria;
-import com.example.flow.data.Grupo;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,7 +25,7 @@ public class DespesaActivity extends AppCompatActivity {
 
     private EditText edtValor, edtNota;
     private TextView txtData;
-    private Spinner spinnerMetodoPagamento, spinnerGrupo;
+    private Spinner spinnerMetodoPagamento;
     private Button btnSalvar;
     private ImageView btnVoltar;
     private LinearLayout campoData;
@@ -37,7 +33,6 @@ public class DespesaActivity extends AppCompatActivity {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Calendar myCalendar = Calendar.getInstance();
     private Categoria categoriaExistente;
-    private String groupNameFromIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +45,6 @@ public class DespesaActivity extends AppCompatActivity {
         edtNota = findViewById(R.id.edtNota);
         txtData = findViewById(R.id.txtData);
         spinnerMetodoPagamento = findViewById(R.id.spinnerMetodoPagamento);
-        spinnerGrupo = findViewById(R.id.spinnerGrupo);
         btnSalvar = findViewById(R.id.btnSalvar);
         btnVoltar = findViewById(R.id.btnVoltar);
         campoData = findViewById(R.id.campoData);
@@ -58,13 +52,10 @@ public class DespesaActivity extends AppCompatActivity {
         setupDatePicker();
         setupMetodoPagamentoSpinner();
 
-        groupNameFromIntent = getIntent().getStringExtra("group_name");
         int categoriaId = getIntent().getIntExtra("categoria_id", -1);
 
         if (categoriaId != -1) {
             carregarCategoria(categoriaId);
-        } else if (groupNameFromIntent != null) {
-            setupGrupoSpinnerWithPreselection(groupNameFromIntent);
         }
 
         btnSalvar.setOnClickListener(v -> salvarDespesa());
@@ -86,35 +77,6 @@ public class DespesaActivity extends AppCompatActivity {
                         int metodoPosition = metodoAdapter.getPosition(categoriaExistente.getMetodoPagamento());
                         spinnerMetodoPagamento.setSelection(metodoPosition);
                     }
-
-                    setupGrupoSpinnerWithPreselection(categoriaExistente.getGrupo());
-                }
-            });
-        });
-    }
-
-    private void setupGrupoSpinnerWithPreselection(String groupNameToSelect) {
-        executor.execute(() -> {
-            List<Grupo> grupos = db.grupoDao().getAllGrupos();
-            List<String> nomesDosGrupos = new ArrayList<>();
-            int selectionIndex = -1;
-            for (int i = 0; i < grupos.size(); i++) {
-                String nomeGrupo = grupos.get(i).getNome();
-                nomesDosGrupos.add(nomeGrupo);
-                if (nomeGrupo.equals(groupNameToSelect)) {
-                    selectionIndex = i;
-                }
-            }
-
-            int finalSelectionIndex = selectionIndex;
-            runOnUiThread(() -> {
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, nomesDosGrupos);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinnerGrupo.setAdapter(adapter);
-
-                if (finalSelectionIndex != -1) {
-                    spinnerGrupo.setSelection(finalSelectionIndex);
-                    spinnerGrupo.setEnabled(false); // Desabilitar o spinner
                 }
             });
         });
@@ -148,20 +110,13 @@ public class DespesaActivity extends AppCompatActivity {
         String valorStr = edtValor.getText().toString().trim();
         String data = txtData.getText().toString().trim();
         String metodoPagamento = spinnerMetodoPagamento.getSelectedItem().toString();
-        Object selectedItem = spinnerGrupo.getSelectedItem();
 
         if (valorStr.isEmpty()) {
             Toast.makeText(this, "Preencha o valor!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (selectedItem == null) {
-            Toast.makeText(this, "Selecione um grupo!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         String nomeDaTransacao = nota.isEmpty() ? "Despesa" : nota;
-        String grupoSelecionado = selectedItem.toString();
         double valor = Double.parseDouble(valorStr);
 
         executor.execute(() -> {
@@ -171,10 +126,11 @@ public class DespesaActivity extends AppCompatActivity {
                 categoriaExistente.setValor(valor);
                 categoriaExistente.setData(data);
                 categoriaExistente.setMetodoPagamento(metodoPagamento);
-                categoriaExistente.setGrupo(grupoSelecionado);
+                // O campo 'grupo' não é mais definido aqui
                 db.categoriaDao().update(categoriaExistente);
             } else {
-                Categoria nova = new Categoria(nomeDaTransacao, "despesa", valor, data, metodoPagamento, nota, grupoSelecionado);
+                // O campo 'grupo' é passado como null ou uma string vazia
+                Categoria nova = new Categoria(nomeDaTransacao, "despesa", valor, data, metodoPagamento, nota, "");
                 db.categoriaDao().insert(nova);
             }
 
