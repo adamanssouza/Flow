@@ -26,7 +26,9 @@ import com.example.flow.data.Grupo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -130,13 +132,83 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
             });
         });
     }
+
+    private Map<Grupo, List<Categoria>> agruparCategoriasPorGrupo(List<Categoria> categorias, List<Grupo> grupos) {
+        Map<Grupo, List<Categoria>> categoriasPorGrupo = new HashMap<>();
+
+        // Inicializar todos os grupos (mesmo vazios)
+        for (Grupo grupo : grupos) {
+            categoriasPorGrupo.put(grupo, new ArrayList<>());
+        }
+
+        // Adicionar categorias sem grupo em lista separada
+        List<Categoria> categoriasSemGrupo = new ArrayList<>();
+
+        // Distribuir categorias pelos grupos
+        for (Categoria categoria : categorias) {
+            if (categoria.getGrupoId() != null) {
+                // Encontrar o grupo correspondente
+                for (Grupo grupo : grupos) {
+                    if (grupo.getId() == categoria.getGrupoId()) {
+                        categoriasPorGrupo.get(grupo).add(categoria);
+                        break;
+                    }
+                }
+            } else {
+                categoriasSemGrupo.add(categoria);
+            }
+        }
+
+        return categoriasPorGrupo;
+    }
+
+    private void mostrarCategoriasAgrupadas(Map<Grupo, List<Categoria>> categoriasAgrupadas, List<Categoria> categoriasSemGrupo) {
+        // TODO: No próximo passo - implementar RecyclerView expandível
+        // Por enquanto, vamos mostrar um Toast com o resumo
+        StringBuilder resumo = new StringBuilder();
+        resumo.append("Agrupamento:\n");
+
+        for (Map.Entry<Grupo, List<Categoria>> entry : categoriasAgrupadas.entrySet()) {
+            Grupo grupo = entry.getKey();
+            List<Categoria> categoriasDoGrupo = entry.getValue();
+
+            if (!categoriasDoGrupo.isEmpty()) {
+                resumo.append("• ").append(grupo.getNome())
+                        .append(": ").append(categoriasDoGrupo.size())
+                        .append(" categorias\n");
+            }
+        }
+
+        resumo.append("• Sem grupo: ").append(categoriasSemGrupo.size()).append(" categorias");
+
+        // Mostrar resumo no log (remover depois)
+        System.out.println(resumo.toString());
+    }
     private void carregarCategorias() {
         executor.execute(() -> {
             List<Categoria> categorias = db.categoriaDao().getAllCategorias();
+            List<Grupo> grupos = db.grupoDao().getAllGrupos();
+
+            // NOVO: Agrupar categorias por grupo
+            Map<Grupo, List<Categoria>> categoriasAgrupadas = agruparCategoriasPorGrupo(categorias, grupos);
+            List<Categoria> categoriasSemGrupo = new ArrayList<>();
+
+            // Separar categorias sem grupo
+            for (Categoria categoria : categorias) {
+                if (categoria.getGrupoId() == null) {
+                    categoriasSemGrupo.add(categoria);
+                }
+            }
+
             runOnUiThread(() -> {
+                // TODO: No próximo passo - atualizar adapter para mostrar grupos
+                // Por enquanto, mantemos a lista plana para não quebrar
                 adapter.setLista(categorias);
                 updateEmptyState(categorias.isEmpty());
                 atualizarSaldo(categorias);
+
+                // NOVO: Mostrar categorias agrupadas
+                mostrarCategoriasAgrupadas(categoriasAgrupadas, categoriasSemGrupo);
             });
         });
     }

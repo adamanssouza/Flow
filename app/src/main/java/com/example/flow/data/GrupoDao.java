@@ -27,4 +27,8 @@ public interface GrupoDao {
 
     @Query("SELECT * FROM grupos WHERE nome LIKE '%' || :nome || '%' ORDER BY nome")
     List<Grupo> searchGrupos(String nome);
+
+    // Bruno: Buscar grupo por nome exato
+    @Query("SELECT * FROM grupos WHERE nome = :nome LIMIT 1")
+    Grupo getGrupoByNome(String nome);
 }

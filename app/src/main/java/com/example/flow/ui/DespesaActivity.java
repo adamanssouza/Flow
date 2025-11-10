@@ -15,8 +15,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.flow.R;
 import com.example.flow.data.AppDatabase;
 import com.example.flow.data.Categoria;
+import com.example.flow.data.Grupo;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,6 +37,7 @@ public class DespesaActivity extends AppCompatActivity {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Calendar myCalendar = Calendar.getInstance();
     private Categoria categoriaExistente;
+    private Spinner spinnerGrupo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +54,11 @@ public class DespesaActivity extends AppCompatActivity {
         btnSalvar = findViewById(R.id.btnSalvar);
         btnVoltar = findViewById(R.id.btnVoltar);
         campoData = findViewById(R.id.campoData);
+        spinnerGrupo = findViewById(R.id.spinnerGrupo);
 
         setupDatePicker();
         setupSpinner();
+        carregarGruposNoSpinner(); // Bruno: Carregar grupos no Spinner
 
         int categoriaId = getIntent().getIntExtra("categoria_id", -1);
         if (categoriaId != -1) {
@@ -78,9 +85,32 @@ public class DespesaActivity extends AppCompatActivity {
                         int position = arrayAdapter.getPosition(categoriaExistente.getMetodoPagamento());
                         spinnerMetodoPagamento.setSelection(position);
                     }
+                    // TODO: No próximo passo - selecionar grupo no spinner se existir
                 }
             });
         });
+    }
+
+    private void carregarGruposNoSpinner() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            List<Grupo> grupos = AppDatabase.getInstance(this).grupoDao().getAllGrupos();
+            List<String> nomesGrupos = new ArrayList<>();
+            nomesGrupos.add("Sem grupo"); // Opção padrão
+
+            for (Grupo grupo : grupos) {
+                nomesGrupos.add(grupo.getNome());
+            }
+
+            runOnUiThread(() -> {
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        this, android.R.layout.simple_spinner_item, nomesGrupos
+                );
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerGrupo.setAdapter(adapter);
+            });
+        });
+        executor.shutdown();
     }
 
     private void setupDatePicker() {
@@ -133,8 +163,19 @@ public class DespesaActivity extends AppCompatActivity {
                 categoriaExistente.setNota(nota);
                 db.categoriaDao().update(categoriaExistente);
             } else {
-                // Criar nova categoria
-                Categoria nova = new Categoria(nome, "despesa", valor, data, metodoPagamento, nota, null);
+                // Criar nova categoria com grupo selecionado
+                String grupoSelecionado = spinnerGrupo.getSelectedItem().toString();
+                Integer grupoId = null;
+
+                if (!"Sem grupo".equals(grupoSelecionado)) {
+                    // Buscar ID do grupo selecionado
+                    Grupo grupo = db.grupoDao().getGrupoByNome(grupoSelecionado);
+                    if (grupo != null) {
+                        grupoId = grupo.getId();
+                    }
+                }
+
+                Categoria nova = new Categoria(nome, "despesa", valor, data, metodoPagamento, nota, grupoId);
                 db.categoriaDao().insert(nova);
             }
             runOnUiThread(() -> {
