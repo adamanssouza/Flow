@@ -9,9 +9,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.flow.R;
 import com.example.flow.data.AppDatabase;
 import com.example.flow.data.Categoria;
+import com.example.flow.data.Grupo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -26,13 +30,15 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends AppCompatActivity implements CategoriaAdapter.OnItemLongClickListener {
+public class MainActivity extends AppCompatActivity implements CategoriaAdapter.OnItemLongClickListener, GrupoAdapter.OnGrupoClickListener {
 
     private CategoriaAdapter adapter;
+    private GrupoAdapter grupoAdapter; // Bruno: Adapter para grupos
     private AppDatabase db;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private RecyclerView rvCategorias;
+    private RecyclerView rvGrupos; // Bruno: RecyclerView para grupos
     private LinearLayout emptyStateLayout;
     private ImageView profileImageView;
     private TextView profileNameView;
@@ -45,7 +51,9 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
 
         // --- Encontrar Componentes ---
         FloatingActionButton btnAddCategoria = findViewById(R.id.btnAddCategoria);
+        Button btnAddGrupo = findViewById(R.id.btnAddGrupo); // Bruno: Botão de adicionar grupo
         rvCategorias = findViewById(R.id.rvCategorias);
+        rvGrupos = findViewById(R.id.rvGrupos); // Bruno: RecyclerView para grupos
         emptyStateLayout = findViewById(R.id.empty_state_layout);
         LinearLayout profileSection = findViewById(R.id.profile_section);
         profileImageView = findViewById(R.id.profile_image);
@@ -59,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
 
         // --- Configurar a Lista ---
         setupRecyclerView();
+        setupGruposRecyclerView(); // Bruno: Configurar lista de grupos
 
         // --- Carregar Dados Iniciais ---
         carregarCategorias();
@@ -66,12 +75,18 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
 
         // --- Configurar Cliques ---
         btnAddCategoria.setOnClickListener(v -> mostrarDialogoSelecao());
+        btnAddGrupo.setOnClickListener(v -> mostrarDialogoCriarGrupo()); // NOVO: Clique do botão grupo
         profileSection.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
     }
 
+    private void setupGruposRecyclerView() {
+        rvGrupos.setLayoutManager(new LinearLayoutManager(this));
+        grupoAdapter = new GrupoAdapter(new ArrayList<>(), this);
+        rvGrupos.setAdapter(grupoAdapter);
+    }
     private void setupRecyclerView() {
         rvCategorias.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CategoriaAdapter(new ArrayList<>(), this);
@@ -83,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
         super.onResume();
         loadProfileData();
         carregarCategorias(); // Recarrega os dados ao voltar para a tela
+        carregarGrupos(); // NOVO: Carregar grupos também
     }
 
     private void loadProfileData() {
@@ -104,6 +120,16 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
         }
     }
 
+    private void carregarGrupos() {
+        executor.execute(() -> {
+            List<Grupo> grupos = db.grupoDao().getAllGrupos();
+            runOnUiThread(() -> {
+                grupoAdapter.setLista(grupos);
+                // Mostrar/ocultar lista baseado se há grupos
+                rvGrupos.setVisibility(grupos.isEmpty() ? View.GONE : View.VISIBLE);
+            });
+        });
+    }
     private void carregarCategorias() {
         executor.execute(() -> {
             List<Categoria> categorias = db.categoriaDao().getAllCategorias();
@@ -139,6 +165,120 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
         tvSaldoTotal.setText(String.format("R$ %.2f", saldoTotal));
     }
 
+    private void mostrarDialogoCriarGrupo() {
+        // Dialog para criar novo grupo
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_criar_grupo, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+
+        EditText edtNomeGrupo = dialogView.findViewById(R.id.edtNomeGrupo);
+        Button btnCancelar = dialogView.findViewById(R.id.btnCancelarGrupo);
+        Button btnSalvar = dialogView.findViewById(R.id.btnSalvarGrupo);
+
+        // Por padrão, selecionar a cor azul
+        final String[] corSelecionada = {"#2196F3"};
+
+        btnCancelar.setOnClickListener(v -> dialog.dismiss());
+        btnSalvar.setOnClickListener(v -> {
+            String nomeGrupo = edtNomeGrupo.getText().toString().trim();
+            if (nomeGrupo.isEmpty()) {
+                Toast.makeText(this, "Digite um nome para o grupo!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Criar e salvar o grupo
+            Grupo novoGrupo = new Grupo(nomeGrupo, corSelecionada[0], "ic_folder");
+            executor.execute(() -> {
+                db.grupoDao().insert(novoGrupo);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Grupo criado!", Toast.LENGTH_SHORT).show();
+                    carregarGrupos();
+                });
+            });
+
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void mostrarDialogoOpcoesGrupo(Grupo grupo) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_item_options, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+
+        TextView tvOptionNome = dialogView.findViewById(R.id.tvOptionNome);
+        Button btnEditar = dialogView.findViewById(R.id.btnEditar);
+        Button btnExcluir = dialogView.findViewById(R.id.btnExcluir);
+
+        // Esconder campos não usados para grupos
+        dialogView.findViewById(R.id.tvOptionValor).setVisibility(View.GONE);
+        dialogView.findViewById(R.id.tvOptionData).setVisibility(View.GONE);
+        dialogView.findViewById(R.id.tvOptionMetodo).setVisibility(View.GONE);
+        dialogView.findViewById(R.id.tvOptionNota).setVisibility(View.GONE);
+
+        tvOptionNome.setText("Grupo: " + grupo.getNome());
+
+        btnEditar.setOnClickListener(v -> {
+            // Abrir dialog de edição (reutilizar o mesmo dialog de criação)
+            mostrarDialogoEditarGrupo(grupo);
+            dialog.dismiss();
+        });
+
+        btnExcluir.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Excluir Grupo")
+                    .setMessage("Tem certeza que deseja excluir o grupo \"" + grupo.getNome() + "\"?")
+                    .setPositiveButton("Excluir", (d, which) -> {
+                        executor.execute(() -> {
+                            db.grupoDao().delete(grupo);
+                            carregarGrupos(); // Recarregar lista
+                        });
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void mostrarDialogoEditarGrupo(Grupo grupo) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_criar_grupo, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+
+        EditText edtNomeGrupo = dialogView.findViewById(R.id.edtNomeGrupo);
+        Button btnCancelar = dialogView.findViewById(R.id.btnCancelarGrupo);
+        Button btnSalvar = dialogView.findViewById(R.id.btnSalvarGrupo);
+
+        // Preencher com dados atuais
+        edtNomeGrupo.setText(grupo.getNome());
+        final String[] corSelecionada = {grupo.getCor()};
+
+        // TODO: No próximo card - implementar seleção de cor no edit também
+
+        btnCancelar.setOnClickListener(v -> dialog.dismiss());
+        btnSalvar.setOnClickListener(v -> {
+            String nomeGrupo = edtNomeGrupo.getText().toString().trim();
+            if (nomeGrupo.isEmpty()) {
+                Toast.makeText(this, "Digite um nome para o grupo!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Atualizar grupo
+            grupo.setNome(nomeGrupo);
+            grupo.setCor(corSelecionada[0]);
+            executor.execute(() -> {
+                db.grupoDao().update(grupo);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Grupo atualizado!", Toast.LENGTH_SHORT).show();
+                    carregarGrupos(); // Recarregar lista
+                });
+            });
+
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
     private void mostrarDialogoSelecao() {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.float_categoria, null);
         Button btnReceitas = dialogView.findViewById(R.id.btnReceitas);
@@ -190,6 +330,19 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
         });
 
         dialog.show();
+    }
+
+    // Bruno: Implementação dos cliques nos grupos
+    @Override
+    public void onGrupoClick(Grupo grupo) {
+        // TODO: No próximo card - expandir/recolher grupo
+        Toast.makeText(this, "Clicou no grupo: " + grupo.getNome(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onGrupoLongClick(Grupo grupo) {
+        // Dialog para editar/excluir grupo
+        mostrarDialogoOpcoesGrupo(grupo);
     }
 
     @Override

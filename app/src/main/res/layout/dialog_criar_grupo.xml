@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Novo Grupo"
+        android:textColor="#212121"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Campo Nome do Grupo -->
+    <EditText
+        android:id="@+id/edtNomeGrupo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nome do grupo"
+        android:textColor="#212121"
+        android:textColorHint="#757575"
+        android:background="@drawable/bg_input"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Seleção de Cor -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cor do grupo:"
+        android:textColor="#212121"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <!-- Cores pré-definidas -->
+        <View
+            android:id="@+id/cor_vermelho"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="#FF5252"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"/>
+
+        <View
+            android:id="@+id/cor_azul"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="#2196F3"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"/>
+
+        <View
+            android:id="@+id/cor_verde"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="#4CAF50"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"/>
+
+        <View
+            android:id="@+id/cor_laranja"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="#FF9800"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"/>
+
+        <View
+            android:id="@+id/cor_roxo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="#9C27B0"
+            android:clickable="true"/>
+
+    </LinearLayout>
+
+    <!-- Botões -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCancelarGrupo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancelar"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="#9E9E9E"/>
+
+        <Button
+            android:id="@+id/btnSalvarGrupo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Salvar"
+            android:backgroundTint="?attr/colorPrimary"/>
+
+    </LinearLayout>
+
+</LinearLayout>
