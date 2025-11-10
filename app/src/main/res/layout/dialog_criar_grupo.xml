@@ -41,45 +41,85 @@
         android:orientation="horizontal"
         android:layout_marginBottom="16dp">
 
-        <!-- Cores pré-definidas -->
-        <View
-            android:id="@+id/cor_vermelho"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="#FF5252"
+        <!-- Cores com LinearLayout para melhor clique -->
+        <LinearLayout
+            android:id="@+id/cor_vermelho_layout"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginEnd="8dp"
-            android:clickable="true"/>
+            android:background="@drawable/cor_nao_selecionada"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center">
 
-        <View
-            android:id="@+id/cor_azul"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="#2196F3"
+            <View
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="#FF5252"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cor_azul_layout"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginEnd="8dp"
-            android:clickable="true"/>
+            android:background="@drawable/cor_selecionada"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center">
 
-        <View
-            android:id="@+id/cor_verde"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="#4CAF50"
+            <View
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="#2196F3"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cor_verde_layout"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginEnd="8dp"
-            android:clickable="true"/>
+            android:background="@drawable/cor_nao_selecionada"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center">
 
-        <View
-            android:id="@+id/cor_laranja"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="#FF9800"
+            <View
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="#4CAF50"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cor_laranja_layout"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginEnd="8dp"
-            android:clickable="true"/>
+            android:background="@drawable/cor_nao_selecionada"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center">
 
-        <View
-            android:id="@+id/cor_roxo"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="#9C27B0"
-            android:clickable="true"/>
+            <View
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="#FF9800"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cor_roxo_layout"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/cor_nao_selecionada"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center">
+
+            <View
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="#9C27B0"/>
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -107,5 +147,4 @@
             android:backgroundTint="?attr/colorPrimary"/>
 
     </LinearLayout>
-
 </LinearLayout>

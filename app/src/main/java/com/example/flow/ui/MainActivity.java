@@ -174,8 +174,43 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
         Button btnCancelar = dialogView.findViewById(R.id.btnCancelarGrupo);
         Button btnSalvar = dialogView.findViewById(R.id.btnSalvarGrupo);
 
-        // Por padrão, selecionar a cor azul
+        // Configuração de seleção de cor - VERSÃO COM LAYOUTS
         final String[] corSelecionada = {"#2196F3"};
+        View[] layoutsCor = {
+                dialogView.findViewById(R.id.cor_vermelho_layout),
+                dialogView.findViewById(R.id.cor_azul_layout),
+                dialogView.findViewById(R.id.cor_verde_layout),
+                dialogView.findViewById(R.id.cor_laranja_layout),
+                dialogView.findViewById(R.id.cor_roxo_layout)
+        };
+
+        String[] cores = {"#FF5252", "#2196F3", "#4CAF50", "#FF9800", "#9C27B0"};
+
+        // Configurar cliques diretos nos layouts de cor
+        for (int i = 0; i < layoutsCor.length; i++) {
+            final int index = i;
+            layoutsCor[i].setOnClickListener(v -> {
+                corSelecionada[0] = cores[index];
+
+                // Atualizar todas as bordas
+                for (int j = 0; j < layoutsCor.length; j++) {
+                    if (j == index) {
+                        layoutsCor[j].setBackgroundResource(R.drawable.cor_selecionada);
+                    } else {
+                        layoutsCor[j].setBackgroundResource(R.drawable.cor_nao_selecionada);
+                    }
+                }
+            });
+        }
+
+        // Inicializar com cor azul selecionada e as outras com borda cinza
+        for (int i = 0; i < layoutsCor.length; i++) {
+            if (i == 1) { // Índice 1 = azul
+                layoutsCor[i].setBackgroundResource(R.drawable.cor_selecionada);
+            } else {
+                layoutsCor[i].setBackgroundResource(R.drawable.cor_nao_selecionada);
+            }
+        }
 
         btnCancelar.setOnClickListener(v -> dialog.dismiss());
         btnSalvar.setOnClickListener(v -> {
@@ -253,7 +288,42 @@ public class MainActivity extends AppCompatActivity implements CategoriaAdapter.
         edtNomeGrupo.setText(grupo.getNome());
         final String[] corSelecionada = {grupo.getCor()};
 
-        // TODO: No próximo card - implementar seleção de cor no edit também
+        // Configuração de seleção de cor - VERSÃO COM LAYOUTS
+        View[] layoutsCor = {
+                dialogView.findViewById(R.id.cor_vermelho_layout),
+                dialogView.findViewById(R.id.cor_azul_layout),
+                dialogView.findViewById(R.id.cor_verde_layout),
+                dialogView.findViewById(R.id.cor_laranja_layout),
+                dialogView.findViewById(R.id.cor_roxo_layout)
+        };
+
+        String[] cores = {"#FF5252", "#2196F3", "#4CAF50", "#FF9800", "#9C27B0"};
+
+        // Configurar cliques diretos nos layouts de cor
+        for (int i = 0; i < layoutsCor.length; i++) {
+            final int index = i;
+            layoutsCor[i].setOnClickListener(v -> {
+                corSelecionada[0] = cores[index];
+
+                // Atualizar todas as bordas
+                for (int j = 0; j < layoutsCor.length; j++) {
+                    if (j == index) {
+                        layoutsCor[j].setBackgroundResource(R.drawable.cor_selecionada);
+                    } else {
+                        layoutsCor[j].setBackgroundResource(R.drawable.cor_nao_selecionada);
+                    }
+                }
+            });
+        }
+
+        // Inicializar com a cor atual do grupo
+        for (int i = 0; i < cores.length; i++) {
+            if (cores[i].equals(corSelecionada[0])) {
+                layoutsCor[i].setBackgroundResource(R.drawable.cor_selecionada);
+            } else {
+                layoutsCor[i].setBackgroundResource(R.drawable.cor_nao_selecionada);
+            }
+        }
 
         btnCancelar.setOnClickListener(v -> dialog.dismiss());
         btnSalvar.setOnClickListener(v -> {
