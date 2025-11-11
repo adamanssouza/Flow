@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,15 +48,28 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements GroupedTransactionAdapter.OnTransactionLongClickListener, GroupedTransactionAdapter.OnGroupLongClickListener {
+=======
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class MainActivity extends AppCompatActivity implements TransactionAdapter.OnTransactionLongClickListener {
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
 
     private static final String PREFS_NAME = "FlowPrefs";
     private static final String BALANCE_CARD_EXPANDED = "balance_card_expanded";
 
+<<<<<<< HEAD
     private GroupedTransactionAdapter adapter;
+=======
+    private TransactionAdapter adapter;
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
     private AppDatabase db;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private RecyclerView rvCategorias;
+<<<<<<< HEAD
     private LinearLayout emptyStateLayout, balanceDetails;
     private RelativeLayout balanceHeader;
     private ImageView profileImageView, ivSearchIcon, ivBalanceToggle;
@@ -63,6 +78,19 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
     private TextView tvTotalReceitas, tvTotalDespesas, tvSaldoTotal;
     private Map<String, Boolean> groupExpandedState = new HashMap<>();
     private List<Categoria> allCategorias = new ArrayList<>();
+=======
+    private LinearLayout emptyStateLayout;
+    private ImageView profileImageView, ivSearchIcon;
+    private EditText etSearch;
+    private TextView profileNameView;
+    private TextView tvTotalReceitas, tvTotalDespesas, tvSaldoTotal;
+    private List<Categoria> allCategorias = new ArrayList<>();
+
+    // --- Variáveis para o Card de Saldo ---
+    private RelativeLayout balanceHeader;
+    private ConstraintLayout balanceDetails;
+    private ImageView ivBalanceToggle;
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +109,11 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
         tvSaldoTotal = findViewById(R.id.tv_saldo_total);
         ivSearchIcon = findViewById(R.id.ivSearchIcon);
         etSearch = findViewById(R.id.etSearch);
+<<<<<<< HEAD
+=======
+
+        // --- Encontrar Componentes do Card de Saldo ---
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
         balanceHeader = findViewById(R.id.balance_header);
         balanceDetails = findViewById(R.id.balance_details);
         ivBalanceToggle = findViewById(R.id.iv_balance_toggle);
@@ -95,12 +128,39 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
         carregarCategorias();
         loadProfileData();
         setupBalanceCardToggle();
+<<<<<<< HEAD
 
         // --- Configurar Cliques e Listeners ---
         btnAdd.setOnClickListener(v -> {
             showAddOptionsDialog();
         });
         
+=======
+
+        // --- Configurar Cliques e Listeners ---
+        btnAdd.setOnClickListener(v -> {
+            AlertDialog.Builder newGroupBuilder = new AlertDialog.Builder(this);
+            newGroupBuilder.setTitle("Novo Grupo");
+
+            final EditText input = new EditText(this);
+            input.setHint("Nome do Grupo");
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            lp.setMargins(48, 16, 48, 0);
+            input.setLayoutParams(lp);
+            newGroupBuilder.setView(input);
+
+            newGroupBuilder.setPositiveButton("Criar", (dialog, which) -> {
+                // Ação de criar grupo desativada temporariamente.
+                dialog.dismiss();
+            });
+            newGroupBuilder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+
+            newGroupBuilder.show();
+        });
+
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
         profileSection.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
@@ -111,19 +171,28 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
     private void setupBalanceCardToggle() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         boolean isExpanded = prefs.getBoolean(BALANCE_CARD_EXPANDED, true);
+<<<<<<< HEAD
         updateBalanceCardView(isExpanded, false); // false para não animar na inicialização
+=======
+        updateBalanceCardView(isExpanded, false);
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
 
         balanceHeader.setOnClickListener(v -> {
             SharedPreferences.Editor editor = prefs.edit();
             boolean newExpandedState = !balanceDetails.isShown();
             editor.putBoolean(BALANCE_CARD_EXPANDED, newExpandedState);
             editor.apply();
+<<<<<<< HEAD
             updateBalanceCardView(newExpandedState, true); // true para animar no clique
+=======
+            updateBalanceCardView(newExpandedState, true);
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
         });
     }
 
     private void updateBalanceCardView(boolean isExpanded, boolean animate) {
         if (animate) {
+<<<<<<< HEAD
             ivBalanceToggle.animate().rotation(isExpanded ? 0 : 180).setDuration(300).start();
             balanceDetails.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
         } else {
@@ -173,11 +242,22 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
         });
 
         addOptionsDialog.show();
+=======
+            ivBalanceToggle.animate().rotation(isExpanded ? 180 : 0).setDuration(300).start();
+        } else {
+            ivBalanceToggle.setRotation(isExpanded ? 180 : 0);
+        }
+        balanceDetails.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
     }
 
     private void setupRecyclerView() {
         rvCategorias.setLayoutManager(new LinearLayoutManager(this));
+<<<<<<< HEAD
         adapter = new GroupedTransactionAdapter(this, this);
+=======
+        adapter = new TransactionAdapter(this, this);
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
         rvCategorias.setAdapter(adapter);
     }
 
@@ -186,6 +266,10 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
             if (etSearch.getVisibility() == View.GONE) {
                 etSearch.setVisibility(View.VISIBLE);
                 etSearch.requestFocus();
+<<<<<<< HEAD
+=======
+                etSearch.setHint("Buscar Transação...");
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
             } else {
                 etSearch.setVisibility(View.GONE);
                 etSearch.setText("");
@@ -198,7 +282,11 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+<<<<<<< HEAD
                 filterGroups(s.toString());
+=======
+                filterTransactions(s.toString());
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
             }
 
             @Override
@@ -206,6 +294,7 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
         });
     }
 
+<<<<<<< HEAD
     private void filterGroups(String query) {
         Map<String, List<Categoria>> filteredData = new LinkedHashMap<>();
         if (query.isEmpty()) {
@@ -222,25 +311,36 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
             }
         }
         adapter.setData(filteredData, groupExpandedState);
+=======
+    private void filterTransactions(String query) {
+        List<Categoria> filteredList = new ArrayList<>();
+        if (query.isEmpty()) {
+            filteredList.addAll(allCategorias);
+        } else {
+            String lowerCaseQuery = query.toLowerCase();
+            for (Categoria c : allCategorias) {
+                if (c.getNome().toLowerCase(Locale.ROOT).contains(lowerCaseQuery)) {
+                    filteredList.add(c);
+                }
+            }
+        }
+        adapter.setData(filteredList);
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         loadProfileData();
-        carregarCategorias(); // Recarrega os dados ao voltar para a tela
+        carregarCategorias();
     }
 
     private void loadProfileData() {
         SharedPreferences prefs = getSharedPreferences("profile", Context.MODE_PRIVATE);
-        String name = prefs.getString("name", null);
+        String name = prefs.getString("name", "Perfil");
         String imageUriString = prefs.getString("imageUri", null);
 
-        if (name != null && !name.isEmpty()) {
-            profileNameView.setText(name);
-        } else {
-            profileNameView.setText(R.string.profile);
-        }
+        profileNameView.setText(name);
 
         if (imageUriString != null) {
             Uri imageUri = Uri.parse(imageUriString);
@@ -255,7 +355,11 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
             allCategorias = db.categoriaDao().getAllCategorias();
 
             Collections.sort(allCategorias, (c1, c2) -> {
+<<<<<<< HEAD
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.US);
+=======
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
                 try {
                     Date date1 = sdf.parse(c1.getData());
                     Date date2 = sdf.parse(c2.getData());
@@ -264,19 +368,28 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
                     if (dateCompare != 0) {
                         return dateCompare;
                     }
+<<<<<<< HEAD
 
                     return c1.getNome().compareToIgnoreCase(c2.getNome());
 
+=======
+                    return c1.getNome().compareToIgnoreCase(c2.getNome());
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
                 } catch (ParseException e) {
                     e.printStackTrace();
                     return 0;
                 }
             });
 
+<<<<<<< HEAD
             Map<String, List<Categoria>> groupedData = groupData(allCategorias);
 
             runOnUiThread(() -> {
                 adapter.setData(groupedData, groupExpandedState);
+=======
+            runOnUiThread(() -> {
+                adapter.setData(allCategorias);
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
                 updateEmptyState(allCategorias.isEmpty());
                 atualizarSaldo(allCategorias);
             });
@@ -301,6 +414,7 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
     }
 
     private String formatarValor(double valor) {
+<<<<<<< HEAD
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
         if (valor >= 1000 || valor <= -1000) {
             String formattedValue = format.format(valor).replace("R$", "").trim();
@@ -333,9 +447,16 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
         View dialogView = LayoutInflater.from(this).inflate(R.layout.float_categoria, null);
         Button btnReceitas = dialogView.findViewById(R.id.btnReceitas);
         Button btnDespesas = dialogView.findViewById(R.id.btnDespesas);
+=======
+        return NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format(valor);
+    }
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
 
-        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+    private void atualizarSaldo(List<Categoria> categorias) {
+        double totalReceitas = 0;
+        double totalDespesas = 0;
 
+<<<<<<< HEAD
         btnReceitas.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ReceitaActivity.class);
             intent.putExtra("group_name", groupName);
@@ -349,8 +470,21 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
             startActivity(intent);
             dialog.dismiss();
         });
+=======
+        for (Categoria c : categorias) {
+            if ("receita".equals(c.getTipo())) {
+                totalReceitas += c.getValor();
+            } else {
+                totalDespesas += c.getValor();
+            }
+        }
 
-        dialog.show();
+        double saldoTotal = totalReceitas - totalDespesas;
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
+
+        tvTotalReceitas.setText(formatarValor(totalReceitas));
+        tvTotalDespesas.setText(formatarValor(totalDespesas));
+        tvSaldoTotal.setText(formatarValor(saldoTotal));
     }
 
     @Override
@@ -389,6 +523,7 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
                 })
                 .setNegativeButton("Não", null)
                 .show();
+<<<<<<< HEAD
     }
 
     @Override
@@ -424,6 +559,8 @@ public class MainActivity extends AppCompatActivity implements GroupedTransactio
                 })
                 .setNegativeButton("Não", null)
                 .show();
+=======
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
     }
 
     @Override

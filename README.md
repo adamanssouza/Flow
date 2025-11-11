@@ -11,7 +11,10 @@ Flow é um aplicativo Android desenvolvido para ajudar no controle de finanças 
 - **Seleção de Data:** Escolha a data exata de cada transação usando um calendário interativo.
 - **Perfil de Usuário:** Personalize sua experiência com um perfil de usuário que inclui foto, nome e e-mail.
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
 ## 🛠️ Tecnologias Utilizadas
 
 - **Linguagem:** Java
