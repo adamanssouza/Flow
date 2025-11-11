@@ -13,15 +13,17 @@ public class Categoria {
     private String data;
     private String metodoPagamento;
     private String nota;
+    private String grupo;
 
     // Construtor
-    public Categoria(String nome, String tipo, double valor, String data, String metodoPagamento, String nota) {
+    public Categoria(String nome, String tipo, double valor, String data, String metodoPagamento, String nota, String grupo) {
         this.nome = nome;
         this.tipo = tipo;
         this.valor = valor;
         this.data = data;
         this.metodoPagamento = metodoPagamento;
         this.nota = nota;
+        this.grupo = grupo;
     }
 
     // Getters e setters
@@ -45,4 +47,7 @@ public class Categoria {
 
     public String getNota() { return nota; }
     public void setNota(String nota) { this.nota = nota; }
+
+    public String getGrupo() { return grupo; }
+    public void setGrupo(String grupo) { this.grupo = grupo; }
 }
