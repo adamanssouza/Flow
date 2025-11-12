@@ -2,7 +2,6 @@ package com.example.flow.ui;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -18,15 +17,28 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+<<<<<<< HEAD
 import com.canhub.cropper.CropImage;
+=======
+<<<<<<< HEAD
+import com.canhub.cropper.CropImage;
+=======
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
 import com.canhub.cropper.CropImageContract;
 import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
 import com.example.flow.R;
 import de.hdodenhof.circleimageview.CircleImageView;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
 
 import java.io.InputStream;
+=======
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -42,7 +54,16 @@ public class ProfileActivity extends AppCompatActivity {
                     imageUri = result.getUriContent();
                     profileImageView.setImageURI(imageUri);
                 } else {
+<<<<<<< HEAD
                     Toast.makeText(this, "Corte de imagem cancelado.", Toast.LENGTH_SHORT).show();
+=======
+<<<<<<< HEAD
+                    Toast.makeText(this, "Corte de imagem cancelado.", Toast.LENGTH_SHORT).show();
+=======
+                    // Você pode tratar o erro aqui se quiser
+                    // Toast.makeText(this, "Corte de imagem cancelado.", Toast.LENGTH_SHORT).show();
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
                 }
             });
 
@@ -132,8 +153,18 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (imageUriString != null) {
             Uri storedUri = Uri.parse(imageUriString);
+<<<<<<< HEAD
                 profileImageView.setImageURI(storedUri);
                 imageUri = storedUri;
+=======
+<<<<<<< HEAD
+                profileImageView.setImageURI(storedUri);
+                imageUri = storedUri;
+=======
+            profileImageView.setImageURI(storedUri);
+            imageUri = storedUri;
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
         } else {
             profileImageView.setImageResource(R.drawable.ic_person);
         }

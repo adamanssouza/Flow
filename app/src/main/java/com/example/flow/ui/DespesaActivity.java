@@ -15,7 +15,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.flow.R;
 import com.example.flow.data.AppDatabase;
 import com.example.flow.data.Categoria;
+<<<<<<< HEAD
 import com.example.flow.data.Grupo;
+=======
+<<<<<<< HEAD
+import com.example.flow.data.Grupo;
+=======
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,6 +93,10 @@ public class DespesaActivity extends AppCompatActivity {
                         int metodoPosition = metodoAdapter.getPosition(categoriaExistente.getMetodoPagamento());
                         spinnerMetodoPagamento.setSelection(metodoPosition);
                     }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
 
                     setupGrupoSpinnerWithPreselection(categoriaExistente.getGrupo());
                 }
@@ -115,6 +126,11 @@ public class DespesaActivity extends AppCompatActivity {
                 if (finalSelectionIndex != -1) {
                     spinnerGrupo.setSelection(finalSelectionIndex);
                     spinnerGrupo.setEnabled(false); // Desabilitar o spinner
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
                 }
             });
         });
@@ -148,13 +164,24 @@ public class DespesaActivity extends AppCompatActivity {
         String valorStr = edtValor.getText().toString().trim();
         String data = txtData.getText().toString().trim();
         String metodoPagamento = spinnerMetodoPagamento.getSelectedItem().toString();
+<<<<<<< HEAD
         Object selectedItem = spinnerGrupo.getSelectedItem();
+=======
+<<<<<<< HEAD
+        Object selectedItem = spinnerGrupo.getSelectedItem();
+=======
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
 
         if (valorStr.isEmpty()) {
             Toast.makeText(this, "Preencha o valor!", Toast.LENGTH_SHORT).show();
             return;
         }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
         if (selectedItem == null) {
             Toast.makeText(this, "Selecione um grupo!", Toast.LENGTH_SHORT).show();
             return;
@@ -162,6 +189,12 @@ public class DespesaActivity extends AppCompatActivity {
 
         String nomeDaTransacao = nota.isEmpty() ? "Despesa" : nota;
         String grupoSelecionado = selectedItem.toString();
+<<<<<<< HEAD
+=======
+=======
+        String nomeDaTransacao = nota.isEmpty() ? "Despesa" : nota;
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
         double valor = Double.parseDouble(valorStr);
 
         executor.execute(() -> {
@@ -171,10 +204,24 @@ public class DespesaActivity extends AppCompatActivity {
                 categoriaExistente.setValor(valor);
                 categoriaExistente.setData(data);
                 categoriaExistente.setMetodoPagamento(metodoPagamento);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
                 categoriaExistente.setGrupo(grupoSelecionado);
                 db.categoriaDao().update(categoriaExistente);
             } else {
                 Categoria nova = new Categoria(nomeDaTransacao, "despesa", valor, data, metodoPagamento, nota, grupoSelecionado);
+<<<<<<< HEAD
+=======
+=======
+                // O campo 'grupo' não é mais definido aqui
+                db.categoriaDao().update(categoriaExistente);
+            } else {
+                // O campo 'grupo' é passado como null ou uma string vazia
+                Categoria nova = new Categoria(nomeDaTransacao, "despesa", valor, data, metodoPagamento, nota, "");
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
                 db.categoriaDao().insert(nova);
             }
 

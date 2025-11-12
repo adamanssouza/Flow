@@ -181,9 +181,21 @@ public class GroupedTransactionAdapter extends RecyclerView.Adapter<RecyclerView
 
         TransactionViewHolder(View itemView) {
             super(itemView);
+<<<<<<< HEAD
             tvTransactionName = itemView.findViewById(R.id.tvTransactionName);
             tvTransactionAmount = itemView.findViewById(R.id.tvTransactionAmount);
             tvTransactionDate = itemView.findViewById(R.id.tvTransactionDate);
+=======
+<<<<<<< HEAD
+            tvTransactionName = itemView.findViewById(R.id.tvTransactionName);
+            tvTransactionAmount = itemView.findViewById(R.id.tvTransactionAmount);
+            tvTransactionDate = itemView.findViewById(R.id.tvTransactionDate);
+=======
+            tvTransactionName = itemView.findViewById(R.id.tv_transaction_name);
+            tvTransactionAmount = itemView.findViewById(R.id.tv_transaction_amount);
+            tvTransactionDate = itemView.findViewById(R.id.tv_transaction_date);
+>>>>>>> 08ed45e65e1b9eef943e75da5ce387df2667aa40
+>>>>>>> 48c4d9876c8ee4e486ff60851c6a43221d99c15e
 
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
