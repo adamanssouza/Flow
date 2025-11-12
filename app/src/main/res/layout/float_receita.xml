@@ -13,7 +13,7 @@
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#0A84FF"
+        android:background="#4CAF50"
         android:padding="16dp"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
@@ -65,21 +65,18 @@
             android:textSize="16sp"/>
     </LinearLayout>
 
-    <!-- Categoria -->
-    <EditText
-        android:id="@+id/edtCategoria"
+    <!-- Grupo -->
+    <Spinner
+        android:id="@+id/spinnerGrupo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Adicionar categoria"
-        android:drawableStart="@drawable/ic_tag"
-        android:padding="12dp"
         android:background="@drawable/bg_input"
-        android:inputType="text"
+        android:padding="12dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/campoData"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Valor -->
     <LinearLayout
@@ -91,7 +88,7 @@
         android:padding="12dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/edtCategoria"
+        app:layout_constraintTop_toBottomOf="@id/spinnerGrupo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -142,12 +139,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Nota -->
+    <!-- Nota / Descrição -->
     <EditText
         android:id="@+id/edtNota"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Adicionar uma nota"
+        android:hint="Descrição (Opcional)"
         android:background="@drawable/bg_input"
         android:padding="12dp"
         android:inputType="text"
@@ -157,13 +154,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Botão salvar -->
+    <!-- Botão Salvar -->
     <Button
         android:id="@+id/btnSalvar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Salvar"
-        android:backgroundTint="#0A84FF"
+        android:backgroundTint="#4CAF50"
         android:textColor="#FFFFFF"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp"
